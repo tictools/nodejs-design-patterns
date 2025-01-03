@@ -22,5 +22,5 @@ try {
       console.error(`Error when executing ticker: ${error.message}`);
     });
 } catch (error) {
-  console.log(`🚨 ${error.message}`);
+  console.log(`🚨 Error when invoking ticker method: ${error.message}`);
 }

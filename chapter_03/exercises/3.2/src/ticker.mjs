@@ -1,8 +1,8 @@
 import { EventEmitter } from "node:events";
 
-const TIMEOUT_IN_MILLISECONDS = 50;
-
 class RecursiveEventBuilder extends EventEmitter {
+  TIMEOUT_IN_MILLISECONDS = 50;
+
   constructor() {
     super();
     this.thresholdInMilliseconds = 0;
@@ -34,10 +34,10 @@ class RecursiveEventBuilder extends EventEmitter {
     globalThis.setTimeout(() => {
       this.emit("tick", Date.now());
       this.ticksCounter++;
-      this.thresholdInMilliseconds -= TIMEOUT_IN_MILLISECONDS;
+      this.thresholdInMilliseconds -= this.TIMEOUT_IN_MILLISECONDS;
 
       this.recurse();
-    }, TIMEOUT_IN_MILLISECONDS);
+    }, this.TIMEOUT_IN_MILLISECONDS);
   }
 
   start() {
