@@ -25,6 +25,14 @@ class RecursiveEventBuilder extends EventEmitter {
     return this;
   }
 
+  emitEventWithMessage({ event, message }) {
+    this.emit(event, message);
+  }
+
+  formatTickEventCounter() {
+    return `${this.ticksCounter} ${this.ticksCounter !== 1 ? "ticks" : "tick"}`;
+  }
+
   recurse() {
     if (this.thresholdInMilliseconds <= 0) {
       this.callback(null, this.ticksCounter);
@@ -32,7 +40,10 @@ class RecursiveEventBuilder extends EventEmitter {
     }
 
     globalThis.setTimeout(() => {
-      this.emit("tick", `${Date.now()} ms`);
+      this.emitEventWithMessage({
+        event: "tick",
+        message: this.formatTickEventCounter(),
+      });
       this.ticksCounter++;
       this.thresholdInMilliseconds -= this.TIMEOUT_IN_MILLISECONDS;
 
@@ -41,8 +52,9 @@ class RecursiveEventBuilder extends EventEmitter {
   }
 
   start() {
-    // this.emit("tick", "INITIAL STEP"); // it does not work
-    process.nextTick(() => this.emit("tick", "INITIAL STEP"));
+    process.nextTick(() =>
+      this.emitEventWithMessage({ event: "tick", message: "INITIAL TICK" })
+    );
     this.recurse();
     return this;
   }
