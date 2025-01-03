@@ -32,7 +32,7 @@ class RecursiveEventBuilder extends EventEmitter {
     }
 
     globalThis.setTimeout(() => {
-      this.emit("tick", Date.now());
+      this.emit("tick", `${Date.now()} ms`);
       this.ticksCounter++;
       this.thresholdInMilliseconds -= this.TIMEOUT_IN_MILLISECONDS;
 

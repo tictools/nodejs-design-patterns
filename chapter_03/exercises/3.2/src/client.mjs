@@ -12,8 +12,8 @@ const callback = (error, totalTicks) => {
 
 try {
   ticker({ thresholdInMilliseconds, callback })
-    .on("tick", (dateInMilliseconds) => {
-      console.log(`🚀 tick event emitted at ${dateInMilliseconds} ms`);
+    .on("tick", (step) => {
+      console.log(`🚀 tick event emitted at ${step}`);
     })
     .on("end", () => {
       console.error("🙌 Excution ended!");
