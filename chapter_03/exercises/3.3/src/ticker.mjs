@@ -1,3 +1,4 @@
+/* eslint-disable valid-typeof */
 import { EventEmitter } from "node:events";
 
 class RecursiveEventBuilder extends EventEmitter {
@@ -60,9 +61,75 @@ class RecursiveEventBuilder extends EventEmitter {
   }
 }
 
+class ValidatorService {
+  VALID_TYPES = [
+    "string",
+    "number",
+    "boolean",
+    "undefined",
+    "object",
+    "function",
+    "symbol",
+    "bigint",
+  ];
+
+  validateType(type) {
+    return this.VALID_TYPES.includes(type);
+  }
+
+  validateValue({ value, type }) {
+    return !!value && typeof value === type;
+  }
+
+  validate({ value, key, type }) {
+    const errorMessage = null;
+    const isValid = true;
+
+    const isValidType = this.validateType(type);
+
+    if (!isValidType) {
+      return {
+        errorMessage: `Invalid type "${type}" provided for validation.`,
+        isValid: false,
+      };
+    }
+
+    const isValidValue = this.validateValue({ value, type });
+
+    if (!isValidValue) {
+      return {
+        errorMessage: `${key} must be a ${type}, but received ${typeof value}`,
+        isValid: false,
+      };
+    }
+
+    return { errorMessage, isValid };
+  }
+}
+
 function ticker({ thresholdInMilliseconds, callback }) {
-  if (!thresholdInMilliseconds || !callback) {
-    throw new TypeError("thresholdInMilliseconds && callback must be provided");
+  const validator = new ValidatorService();
+
+  const { errorMessage: erroredThresholdMessage, isValid: isValidThreshold } =
+    validator.validate({
+      value: thresholdInMilliseconds,
+      key: "threshold in milliseconds",
+      type: "number",
+    });
+
+  if (!isValidThreshold) {
+    throw new TypeError(erroredThresholdMessage);
+  }
+
+  const { errorMessage: erroredCallbackMessage, isValid: isValidCallback } =
+    validator.validate({
+      value: callback,
+      key: "callback",
+      type: "function",
+    });
+
+  if (!isValidCallback) {
+    throw new TypeError(erroredCallbackMessage);
   }
 
   return new RecursiveEventBuilder()
