@@ -2,12 +2,12 @@ import ticker from "./ticker.mjs";
 
 const thresholdInMilliseconds = 500;
 
-const callback = (error, totalTicks) => {
+const callback = (error, ticksCounter) => {
   if (error) {
-    console.error(`Error when executing callback: ${error.message}`);
+    throw new TypeError(error.message);
   }
 
-  console.log(`💥 Total ticks after callback execution: ${totalTicks}`);
+  console.log(`💥 Total ticks after callback execution: ${ticksCounter}`);
 };
 
 try {

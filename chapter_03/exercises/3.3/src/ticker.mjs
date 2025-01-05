@@ -4,17 +4,6 @@ import ValidationService from "./ValidationService.mjs";
 function ticker({ thresholdInMilliseconds, callback }) {
   const validator = new ValidationService();
 
-  const { errorMessage: erroredThresholdMessage, isValid: isValidThreshold } =
-    validator.validate({
-      value: thresholdInMilliseconds,
-      key: "threshold in milliseconds",
-      type: "number",
-    });
-
-  if (!isValidThreshold) {
-    throw new TypeError(erroredThresholdMessage);
-  }
-
   const { errorMessage: erroredCallbackMessage, isValid: isValidCallback } =
     validator.validate({
       value: callback,
@@ -23,7 +12,18 @@ function ticker({ thresholdInMilliseconds, callback }) {
     });
 
   if (!isValidCallback) {
-    throw new TypeError(erroredCallbackMessage);
+    callback(new TypeError(erroredCallbackMessage));
+  }
+
+  const { errorMessage: erroredThresholdMessage, isValid: isValidThreshold } =
+    validator.validate({
+      value: thresholdInMilliseconds,
+      key: "threshold in milliseconds",
+      type: "number",
+    });
+
+  if (!isValidThreshold) {
+    callback(new TypeError(erroredThresholdMessage));
   }
 
   return new RecursiveEventBuilder()
